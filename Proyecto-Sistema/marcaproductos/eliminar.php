@@ -3,9 +3,10 @@ include ("../php/conexion.php");
 
 $cod = $_GET["cod"];
 
-$eliminar = "DELETE FROM marca_producto where cod_marca_p = '$cod'";
-
-$resultadoEliminar = mysqli_query($conexion, $eliminar);
+$stmt = mysqli_prepare($conexion, "DELETE FROM marca_producto WHERE cod_marca_p = ?");
+mysqli_stmt_bind_param($stmt, "s", $cod);
+$resultadoEliminar = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 if($resultadoEliminar) {
     header("Location: modificarmarcapro.php");

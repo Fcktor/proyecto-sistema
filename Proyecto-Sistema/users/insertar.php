@@ -9,27 +9,16 @@ $nombre = $_POST["nombre"];
 $tel = $_POST["tel"];
 $marcas = $_POST["marcas"];
 
-$contraseñaconhash = md5($contraseña);
-//origin
-$insertar = "INSERT INTO users(username, password, rol_user, dni_persona, nombre, telef_persona, cod_marca_s) VALUES('$idusuario','$contraseñaconhash', 
-'$rol', '$dni', '$nombre', '$tel', '$marcas')";
+$contraseñaconhash = password_hash($contraseña, PASSWORD_DEFAULT);
 
-//$insertar = "INSERT INTO usuarioss(username, password, rol_user, 
-//dni_persona, nombre, telef_persona, cod_marca_s) VALUES('$idusuario','$contraseñaconhash', 
-//'$rol', '$dni', '$nombre', '$tel', '$marcas')";
-//$insertar = "INSERT INTO usuarios(nombre, username, password) VALUES('$nombre','$idusuario','$contraseñaconhash')";
+$stmt = mysqli_prepare($conexion, "INSERT INTO users(username, password, rol_user, dni_persona, nombre, telef_persona, cod_marca_s) VALUES(?, ?, ?, ?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, "sssssss", $idusuario, $contraseñaconhash, $rol, $dni, $nombre, $tel, $marcas);
+$resultado = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
-$resultado = mysqli_query($conexion, $insertar);
-if($resultado) {
-    echo "<script>alert('Se ha registrado good');
-    window.location='/Proyecto-Sistema/users/usuarios.php'</script>";   //se deja el / cuando se sube a internet, en servidor
+if ($resultado) {
+    echo "<script>alert('Se ha registrado good');window.location='/Proyecto-Sistema/users/usuarios.php'</script>";
 } else {
     echo "<script>alert('No se pudo registrar');window.history.go(-1);</script>";
 }
-
-
-
-
-// 
-
 ?>

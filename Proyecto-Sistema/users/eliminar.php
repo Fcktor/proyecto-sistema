@@ -8,9 +8,10 @@ if($cod == 1) {
     header("Location: modificar.php");
     exit;
 }
-$eliminar = "DELETE FROM users where cod_user = '$cod'";
-
-$resultadoEliminar = mysqli_query($conexion, $eliminar);
+$stmt = mysqli_prepare($conexion, "DELETE FROM users WHERE cod_user = ?");
+mysqli_stmt_bind_param($stmt, "s", $cod);
+$resultadoEliminar = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 
 

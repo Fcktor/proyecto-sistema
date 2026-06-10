@@ -1,7 +1,10 @@
 <?php
   include("../php/conexion.php");
   $cod = $_GET["cod"];
-  $users = "SELECT * FROM users WHERE cod_user = '$cod'";
+  $stmt = mysqli_prepare($conexion, "SELECT * FROM users WHERE cod_user = ?");
+  mysqli_stmt_bind_param($stmt, "s", $cod);
+  mysqli_stmt_execute($stmt);
+  $users = mysqli_stmt_get_result($stmt);
 ?>
 
 <!doctype html>
@@ -38,15 +41,14 @@
                 <div class="tabla-header">Nombre</div>
                 <div class="tabla-header">Teléfono</div>
                 <div class="tabla-header">Operación</div>
-                <?php $resultado = mysqli_query($conexion, $users);
-                while($row=mysqli_fetch_assoc($resultado)) { ?>
+                <?php while($row=mysqli_fetch_assoc($users)) { ?>
                 <input type="text"  class="tabla-input" value="<?php echo $row["cod_user"];?>" name="cod">
                 <input type="text" class="tabla-input" value="<?php echo $row["username"];?>" name="username">
                 <input type="text" class="tabla-input" value="<?php echo $row["rol_user"];?>" name="rol">
                 <input type="text" class="tabla-input" value="<?php echo $row["dni_persona"];?>" name="dni">
                 <input type="text" class="tabla-input" value="<?php echo $row["nombre"];?>" name="nombre">
                 <input type="text" class="tabla-input" value="<?php echo $row["telef_persona"];?>" name="telef_persona">
-                <?php } mysqli_free_result($resultado) ?>
+                <?php } mysqli_free_result($users); mysqli_stmt_close($stmt); ?>
                 <input type="submit" value="Actualizar" class="boton-actualizar">
                 </form>
 

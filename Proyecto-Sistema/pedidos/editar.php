@@ -1,7 +1,10 @@
 <?php
   include("../php/conexion.php");
   $cod = $_GET["cod"];
-  $pedido = "SELECT * FROM pedidos WHERE cod_pedid = '$cod'";
+  $stmt = mysqli_prepare($conexion, "SELECT * FROM pedidos WHERE cod_pedid = ?");
+  mysqli_stmt_bind_param($stmt, "s", $cod);
+  mysqli_stmt_execute($stmt);
+  $pedido = mysqli_stmt_get_result($stmt);
 ?>
 
 <!doctype html>
@@ -38,14 +41,13 @@
                 <div class="tabla-header">Fecha de entrega</div>
 
                 <div class="tabla-header">Operación</div>
-                <?php $resultado = mysqli_query($conexion, $pedido);
-                while($row=mysqli_fetch_assoc($resultado)) { ?>
+                <?php while($row=mysqli_fetch_assoc($pedido)) { ?>
                 <input type="text"  class="tabla-input" value="<?php echo $row["cod_pedid"];?>" name="cod">
                 <input type="text" class="tabla-input" value="<?php echo $row["monto_total_ped"];?>" name="montototal">
                 <input type="text" class="tabla-input" value="<?php echo $row["cod_prod"];?>" name="codprod">
                 <input type="text" class="tabla-input" value="<?php echo $row["cod_user"];?>" name="coduser">
                 <input type="date" class="tabla-input" value="<?php echo $row["fecha_entrega"];?>" name="fecha">
-                <?php } mysqli_free_result($resultado) ?>
+                <?php } mysqli_free_result($pedido); mysqli_stmt_close($stmt); ?>
                 <input type="submit" value="Actualizar" class="boton-actualizar">
                 </form>
 

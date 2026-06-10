@@ -1,7 +1,10 @@
 <?php
   include("../php/conexion.php");
   $cod = $_GET["cod"];
-  $categoria = "SELECT * FROM categoria_producto WHERE cod_categ = '$cod'";
+  $stmt = mysqli_prepare($conexion, "SELECT * FROM categoria_producto WHERE cod_categ = ?");
+  mysqli_stmt_bind_param($stmt, "s", $cod);
+  mysqli_stmt_execute($stmt);
+  $categoria = mysqli_stmt_get_result($stmt);
 ?>
 
 <!doctype html>
@@ -35,12 +38,11 @@
                 <div class="tabla-header">Descripción de categoría</div>
                 <div class="tabla-header">Estado</div>
                 <div class="tabla-header">Operación</div>
-                <?php $resultado = mysqli_query($conexion, $categoria);
-                while($row=mysqli_fetch_assoc($resultado)) { ?>
+                <?php while($row=mysqli_fetch_assoc($categoria)) { ?>
                 <input type="text"  class="tabla-input" value="<?php echo $row["cod_categ"];?>" name="cod">
                 <input type="text" class="tabla-input" value="<?php echo $row["descrip_categ"];?>" name="desccat">
                 <input type="text" class="tabla-input" value="<?php echo $row["estado_categ"];?>" name="estadocat">
-                <?php } mysqli_free_result($resultado) ?>
+                <?php } mysqli_free_result($categoria); mysqli_stmt_close($stmt); ?>
                 <input type="submit" value="Actualizar" class="boton-actualizar">
                 </form>
 

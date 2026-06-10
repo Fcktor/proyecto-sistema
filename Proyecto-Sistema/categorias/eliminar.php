@@ -3,9 +3,10 @@ include ("../php/conexion.php");
 
 $cod = $_GET["cod"];
 
-$eliminar = "DELETE FROM categoria_producto where cod_categ = '$cod'";
-
-$resultadoEliminar = mysqli_query($conexion, $eliminar);
+$stmt = mysqli_prepare($conexion, "DELETE FROM categoria_producto WHERE cod_categ = ?");
+mysqli_stmt_bind_param($stmt, "s", $cod);
+$resultadoEliminar = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 if($resultadoEliminar) {
     header("Location: modificarcategoria.php");

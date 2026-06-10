@@ -8,10 +8,10 @@ $estado = $_POST["estadomarcap"];
 
 
 //actualzar
-$actualizar = "UPDATE marca_producto SET descrip_marca_p ='$descrip', estado_p = '$estado'
- WHERE cod_marca_p='$cod'";
-
-$resultado = mysqli_query($conexion, $actualizar);
+$stmt = mysqli_prepare($conexion, "UPDATE marca_producto SET descrip_marca_p = ?, estado_p = ? WHERE cod_marca_p = ?");
+mysqli_stmt_bind_param($stmt, "sss", $descrip, $estado, $cod);
+$resultado = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 if($resultado) {
     echo "<script>alert('Se ha actualizado los cambios');
     window.location='/Proyecto-Sistema/marcaproductos/marcaproductos.php'</script>"; 

@@ -8,9 +8,11 @@
                 header("location: usuarios.php");
               }
 
-  $sql_registro = "SELECT * FROM USERS WHERE (USERNAME LIKE '%$busqueda%'
-  OR COD_USER LIKE '%$busqueda%' OR ROL_USER LIKE '%$busqueda%'
-  OR NOMBRE LIKE '%$busqueda%') ORDER BY COD_USER ASC";
+  $like = "%$busqueda%";
+  $stmt_busq = mysqli_prepare($conexion, "SELECT * FROM USERS WHERE (USERNAME LIKE ? OR COD_USER LIKE ? OR ROL_USER LIKE ? OR NOMBRE LIKE ?) ORDER BY COD_USER ASC");
+  mysqli_stmt_bind_param($stmt_busq, "ssss", $like, $like, $like, $like);
+  mysqli_stmt_execute($stmt_busq);
+  $sql_registro = mysqli_stmt_get_result($stmt_busq);
 
 session_start();
 ?>
@@ -130,8 +132,7 @@ session_start();
                 <div class="tabla-header">Nombre</div>
                 <div class="tabla-header">Teléfono</div>
                 <div class="tabla-header">Operación</div>
-                <?php $resultado = mysqli_query($conexion, $sql_registro);
-                while($row=mysqli_fetch_assoc($resultado)) { ?>
+                <?php while($row=mysqli_fetch_assoc($sql_registro)) { ?>
                 <div class="tabla-item"><?php echo $row["cod_user"];?></div>
                 <div class="tabla-item"><?php echo $row["username"];?></div>
                 <div class="tabla-item"><?php echo $row["rol_user"];?></div>
@@ -142,7 +143,7 @@ session_start();
                     <a href="editar.php?cod=<?php echo $row["cod_user"];?>" class="tabla-item-link">Editar</a> -
                     <a href="eliminar.php?cod=<?php echo $row["cod_user"];?>" class="tabla-item-link">Eliminar</a>
                 </div>
-                <?php } mysqli_free_result($resultado) ?>
+                <?php } mysqli_free_result($sql_registro); mysqli_stmt_close($stmt_busq); ?>
               </div>
              
               
